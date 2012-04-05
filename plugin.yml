@@ -1,0 +1,11 @@
+name: BlockCrusher
+
+main: Dingmatt.BlockCrusher.BlockCrusher
+version: 1.6
+commands:
+    blockcrusher:
+        description: Reloads the config
+        usage: /blockcrusher help
+    bc:
+        description: Reloads the config
+        usage: /blockcrusher help

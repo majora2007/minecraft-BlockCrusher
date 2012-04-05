@@ -1,0 +1,16 @@
+settings:
+  break_blocks: 
+    true
+
+breakable_blocks:
+  - 1             # Stone
+  - 2             # Grass Block
+  - 3             # Dirt
+  - 4             # Cobblestone
+  - 12            # Sand
+  - 13            # Gravel
+  - 17            # Wood
+  - 24            # Sandstone
+  - 86            # Pumpkin
+  - 103           # Melon
+  - 121           # End Stone
