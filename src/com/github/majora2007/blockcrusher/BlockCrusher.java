@@ -9,14 +9,18 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPlugin;
 /**
- * BlockCrusher for Bukkit
+ * A Bukkit Plugin which upon a piston pushing a full stack of blocks into a non-breakable block, 
+ * the last block is broken and an item is naturally dropped. 
+ * 
+ * The plugin is configurable to allow only specific blocks to be broken, by listing the block ids in 
+ * the config.yml file. 
  *
- * @author Dingmatt
+ * @author Majora2007
  */
 public class BlockCrusher extends JavaPlugin
 {
-	public static Logger log = Logger.getLogger("Minecraft");
-	public static String PREFIX;
+	public static Logger consoleLogger = Logger.getLogger("Minecraft");
+	public static String pluginLogPrefix;
 	public static FileConfiguration config; //TODO Replace this immediately! Very bad!
 	
 
@@ -26,7 +30,7 @@ public class BlockCrusher extends JavaPlugin
 	public void onEnable()
 	{
 		PluginDescriptionFile pluginDescriptionFile = getDescription();
-		PREFIX = "[" +  pluginDescriptionFile.getName() + " version: " + pluginDescriptionFile.getVersion() + "] - ";
+		pluginLogPrefix = "[" +  pluginDescriptionFile.getName() + " version: " + pluginDescriptionFile.getVersion() + "] - ";
 
 		getServer().getPluginManager().registerEvents(this.blockListener, this);
 		
@@ -49,7 +53,7 @@ public class BlockCrusher extends JavaPlugin
 	}
 
 	public static void logAdd(String msg) {
-		log.info(PREFIX + msg);
+		consoleLogger.info(pluginLogPrefix + msg);
 	}
 
 	@Override
@@ -65,7 +69,7 @@ public class BlockCrusher extends JavaPlugin
 				String param1 = args.length > 0 ? args[0] : "";
 				if (param1.equals("reload") || param1.equals("r")) {
 					BlockCrusherConfig.load();
-					player.sendMessage(PREFIX + "Config Reloaded");
+					player.sendMessage(pluginLogPrefix + "Config Reloaded");
 				} else if (param1.equals("help") || param1.equals("h")) {
 					player.sendMessage("/blockcrusher reload");
 				}

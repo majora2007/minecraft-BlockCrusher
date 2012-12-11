@@ -15,24 +15,25 @@ import org.bukkit.event.block.BlockPistonEvent;
 import org.bukkit.inventory.ItemStack;
 
 /**
- * RedstoneTeleporters block listener
+ * TODO: Fix Redstone Teleporters blocking this listener
  * 
- * @author Dingmatt, Majora2007
+ * @author Majora2007
  */
 public class BlockCrusherBlockListener implements Listener {
 	public static Block process = null;
 	final int MAX_PUSH_DIST = 13; // Pistons push up to 12 blocks
 	List<String> breakBlocks = new ArrayList<String>();
-	boolean isSticky;
+	boolean isPistonSticky;
 
 	public BlockCrusherBlockListener(final BlockCrusher plugin) {
 	}
 	
 	private Boolean CheckRealPower(Block blk, BlockFace pis) {
-		BlockFace[] dir = new BlockFace[] { BlockFace.NORTH, BlockFace.SOUTH,
+		BlockFace[] blockFaces = new BlockFace[] { BlockFace.NORTH, BlockFace.SOUTH,
 				BlockFace.EAST, BlockFace.WEST, BlockFace.UP, BlockFace.DOWN };
+		
 		int pwr = 0;
-		for (BlockFace face : dir) {
+		for (BlockFace face : blockFaces) {
 			if (face != pis && blk.getRelative(face).getType() != Material.AIR) {
 				pwr += blk.getRelative(face).getBlockPower();
 			}
@@ -152,7 +153,8 @@ public class BlockCrusherBlockListener implements Listener {
 	/***
 	 * Upon a <code>BlockPistonExtendEvent</code>, check to see if the blocks being moved are pushed against 
 	 * Obsidian or Bedrock. If so, break the block. If not, the pistons and blocks behave normally.
-	 * @param event
+	 * 
+	 * @param event 
 	 * @see BlockPistonEvent
 	 */
 	@EventHandler(priority=EventPriority.HIGHEST)
