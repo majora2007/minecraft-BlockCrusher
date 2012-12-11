@@ -1,4 +1,4 @@
-package com.yuami.blockcrusher;
+package com.github.majora2007.blockcrusher;
 
 import java.util.logging.Logger;
 
