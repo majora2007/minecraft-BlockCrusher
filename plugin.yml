@@ -1,7 +1,7 @@
 name: BlockCrusher
 
-main: Dingmatt.BlockCrusher.BlockCrusher
-version: 1.6
+main: com.github.majora2007.blockcrusher.BlockCrusher
+version: 1.0
 commands:
     blockcrusher:
         description: Reloads the config

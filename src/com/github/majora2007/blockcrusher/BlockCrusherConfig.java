@@ -55,7 +55,8 @@ public class BlockCrusherConfig {
 	}
 
 	public static boolean load() {
-		File configFile = createDefaultFiles(new File(DATA_FOLDER, "pluginConfig.yml"));
+		File configFile = createDefaultFiles(new File(DATA_FOLDER, "config.yml"));
+		
 		if (configFile.exists()) {
 			config = BlockCrusher.pluginConfig;
 			try {

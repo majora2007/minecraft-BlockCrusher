@@ -56,32 +56,93 @@ public class BlockCrusher extends JavaPlugin
 		consoleLogger.info(pluginLogPrefix + logMessage);
 	}
 
+	/*
+	 * TO execute a command, we check if the command is a player, then we check if the command is for this plugin, then 
+	 * we parse the plugin command and send a message to player if command executed successfully with status.
+	 * 	TO check if the command is from a player, we check if the sender is a player and if so we extract the command and player from the event.
+	 * 	TO check if command is for this plugin, we test if command starts with "blockcrusher" or "bc".
+	 * 	TO parse the command, we check arguments for proper usage syntax and if pass, we execute the command and send a status message to user.
+	 * 	TO return, we return true if command executed properly or false otherwise.
+	 * 
+	 * (non-Javadoc)
+	 * @see org.bukkit.plugin.java.JavaPlugin#onCommand(org.bukkit.command.CommandSender, org.bukkit.command.Command, java.lang.String, java.lang.String[])
+	 */
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String commandLabel, String[] args)
 	{
-		logAdd("Test1");
-		if (sender instanceof Player) 
+		logAdd("BlockCrusher received a command.");
+		
+		if (isCommandFromPlayer(sender)) 
 		{
-			logAdd("Test2");
+			logAdd("Command is from Player.");
 			String command = cmd.getName().toLowerCase();
-			Player player = (Player)sender;
+			Player player = (Player) sender;
 			
-			if (command.equals("blockcrusher") || command.equals("bc")) 
+			if ( isBlockCrusherCommand(command) ) 
 			{
-				logAdd("Test3");
-				String param1 = args.length > 0 ? args[0] : "";
+				logAdd("Command is for BlockCrusher.");
+				CommandResponse response;
 				
-				if (param1.equals("reload") || param1.equals("r")) 
+				if ( checkUsage(args) )
 				{
-					BlockCrusherConfig.load();
-					player.sendMessage(pluginLogPrefix + "Config Reloaded");
-				} else if (param1.equals("help") || param1.equals("h")) {
-					player.sendMessage("/blockcrusher reload");
+					response = parseCommand(args);
+					player.sendMessage( response.getResponseMessage() );
+					
+					return true;
+				} else {
+					logAdd("Command is not proper form.");
 				}
 				
-				return true;
 			}
 		}
 		return false;
 	}
+	
+	boolean isCommandFromPlayer(CommandSender cmdSender)
+	{
+		return cmdSender instanceof Player;
+	}
+	
+	CommandResponse parseCommand(String[] commandArguments)
+	{
+		CommandResponse response = new CommandResponse();
+		
+		String command = extractSubCommand( commandArguments );
+		
+		if (isReloadCommand(command))
+		{
+			BlockCrusherConfig.load();
+			response.setResponseMessage( pluginLogPrefix + " Configuration Reloaded." );
+		} else if (command.startsWith("help") || command.equals("h")) {
+			response.setResponseMessage("/blockcrusher reload"); // This should display all help options
+		} else {
+			response.setResponseMessage( "Usage: /blockcrusher help" );
+		}
+		
+		return response;
+	}
+	
+	boolean isBlockCrusherCommand(String command)
+	{
+		return (command.startsWith( "blockcrusher" ) || command.equals( "bc" ));
+	}
+	
+	boolean checkUsage(String[] args)
+	{
+		return (args != null && args.length > 0);
+	}
+	
+	String extractSubCommand(String[] args)
+	{
+		assert(args.length > 0);
+		
+		return args[0];
+	}
+	
+	boolean isReloadCommand(String subCommand) 
+	{
+		return (subCommand.equals("reload") || subCommand.equals("r")); 
+	}
+	
+	
 }
