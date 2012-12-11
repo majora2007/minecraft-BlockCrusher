@@ -25,8 +25,8 @@ public class BlockCrusher extends JavaPlugin
 	@Override
 	public void onEnable()
 	{
-		PluginDescriptionFile pdfFile = getDescription();
-		PREFIX = "[" +  pdfFile.getName() + " version: " + pdfFile.getVersion() + "] - ";
+		PluginDescriptionFile pluginDescriptionFile = getDescription();
+		PREFIX = "[" +  pluginDescriptionFile.getName() + " version: " + pluginDescriptionFile.getVersion() + "] - ";
 
 		getServer().getPluginManager().registerEvents(this.blockListener, this);
 		
