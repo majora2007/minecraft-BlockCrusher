@@ -82,7 +82,7 @@ public class BlockCrusherBlockListener implements Listener {
 		// To check if breakable, need to move from current block along face until MAX_PUSH_DIST 
 		// is met OR an unbreakable (47) block is found (must be bellow MAX_PUSH_DIST).
 		
-		breakBlocks = BlockCrusher.config.getStringList("breakable_blocks");
+		breakBlocks = BlockCrusher.pluginConfig.getStringList("breakable_blocks");
 		
 		Block bBlock = blk;
 		Block pBlock = null;
@@ -168,7 +168,7 @@ public class BlockCrusherBlockListener implements Listener {
 		
 		
 		
-		if ( BlockCrusher.config.getBoolean("settings.break_blocks", false) )
+		if ( BlockCrusher.pluginConfig.getBoolean("settings.break_blocks", false) )
 		{
 			Block pis = event.getBlock();
 			if (pis != process) // QUESTION Can this cause a problem?

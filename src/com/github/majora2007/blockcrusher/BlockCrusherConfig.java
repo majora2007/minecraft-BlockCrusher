@@ -55,11 +55,11 @@ public class BlockCrusherConfig {
 	}
 
 	public static boolean load() {
-		File file = createDefaultFiles(new File(DATA_FOLDER, "config.yml"));
-		if (file.exists()) {
-			config = BlockCrusher.config;
+		File configFile = createDefaultFiles(new File(DATA_FOLDER, "pluginConfig.yml"));
+		if (configFile.exists()) {
+			config = BlockCrusher.pluginConfig;
 			try {
-				config.load(file);
+				config.load(configFile);
 			} catch (FileNotFoundException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -70,8 +70,8 @@ public class BlockCrusherConfig {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			//config.configuration(file);
-			//config.load();
+			//pluginConfig.configuration(file);
+			//pluginConfig.load();
 			return true;
 		} else {
 			BlockCrusher.logAdd("Error loading configuration.");
