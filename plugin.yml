@@ -6,6 +6,7 @@ commands:
     blockcrusher:
         description: Reloads the config
         usage: /blockcrusher help
+        alias: bc
     bc:
         description: Reloads the config
-        usage: /blockcrusher help
+        usage: /bc help
