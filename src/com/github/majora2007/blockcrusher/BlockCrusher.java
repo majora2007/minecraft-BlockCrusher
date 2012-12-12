@@ -2,14 +2,12 @@ package com.github.majora2007.blockcrusher;
 
 import java.util.logging.Logger;
 
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandSender;
-import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import com.github.majora2007.blockcrusher.commandexecutors.CommandHandler;
+
+
 /**
  * A Bukkit Plugin which upon a piston pushing a full stack of blocks into a non-breakable block, 
  * the last block is broken and an item is naturally dropped. 
@@ -34,21 +32,43 @@ public class BlockCrusher extends JavaPlugin
 		// Save a copy of the default config.yml if one is not there
         this.saveDefaultConfig();
         
-        
 		declareLoggerPrefix();
 		
-		commandHandler = new CommandHandler(this);
-		getServer().getPluginManager().registerEvents(this.blockListener, this);
-		
+		createCommandHandler();
+		registerListeners();
 
 		
-		if (getConfig() == null)
-		{
-			logAdd("config.yml failed to load.");
-		}
-		
-		
-		logAdd("BlockCrusher has been enabled.");
+		logToConsole("BlockCrusher has been enabled.");
+	}
+
+
+	@Override
+	public void onDisable()
+	{
+		saveDefaultConfig();
+		logToConsole("BlockCrusher has been disabled.");
+	}
+
+	public static void logToConsole(String logMessage) 
+	{
+		consoleLogger.info(pluginLogPrefix + logMessage);
+	}
+	
+	private void registerListeners()
+	{
+		registerBlockListener();
+	}
+
+
+	private void registerBlockListener()
+	{
+		getServer().getPluginManager().registerEvents(this.blockListener, this);
+	}
+
+
+	private void createCommandHandler()
+	{
+		commandHandler = new CommandHandler(this);
 	}
 
 	
@@ -56,16 +76,5 @@ public class BlockCrusher extends JavaPlugin
 	{
 		PluginDescriptionFile pluginDescriptionFile = getDescription();
 		pluginLogPrefix = "[" +  pluginDescriptionFile.getName() + " version: " + pluginDescriptionFile.getVersion() + "] - ";
-	}
-
-	@Override
-	public void onDisable()
-	{
-		saveDefaultConfig();
-		logAdd("BlockCrusher has been disabled.");
-	}
-
-	public static void logAdd(String logMessage) {
-		consoleLogger.info(pluginLogPrefix + logMessage);
 	}
 }
