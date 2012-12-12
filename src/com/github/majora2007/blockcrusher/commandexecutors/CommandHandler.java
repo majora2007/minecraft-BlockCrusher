@@ -28,6 +28,9 @@ public class CommandHandler implements CommandExecutor
 	 */
 	public CommandHandler(final BlockCrusher plugin) {
 		this.plugin = plugin;
+		
+		this.plugin.getCommand("blockcrusher").setExecutor( this );
+		this.plugin.getCommand("bc").setExecutor( this );
 	}
 	
 	/* (non-Javadoc)

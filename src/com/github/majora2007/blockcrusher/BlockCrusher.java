@@ -40,10 +40,7 @@ public class BlockCrusher extends JavaPlugin
 		commandHandler = new CommandHandler(this);
 		getServer().getPluginManager().registerEvents(this.blockListener, this);
 		
-		getCommand("blockcrusher").setExecutor(commandHandler);
-		getCommand("bc").setExecutor( commandHandler );
-		
-		
+
 		
 		if (getConfig() == null)
 		{
