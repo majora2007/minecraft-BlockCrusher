@@ -83,7 +83,7 @@ public class BlockCrusherBlockListener implements Listener {
 		}
 	}
 
-	private boolean isMoveable(Block block)
+	private boolean isUnpushableBlock(Block block)
 	{
 		// PistonMoveReaction does not work, it will cause exceptions to be thrown.
 //		PistonMoveReaction pistonMoveReaction = block.getPistonMoveReaction();
@@ -132,45 +132,35 @@ public class BlockCrusherBlockListener implements Listener {
 		
 		breakBlocks = plugin.getConfig().getStringList("breakable_blocks");
 		
-		Block currentBlock = possibleBreakableBlock;
-		Block nextBlock = null;
-
+		// The first block should not be considered, as it will only be pushed, never broken.
+		Block currentBlock = possibleBreakableBlock.getRelative(face);
+		Block previousBlock = possibleBreakableBlock;	
 		
-		
-		for (int i = 0; i < MAX_PUSH_DIST; i++)
+		for (int i = 0; i < MAX_PUSH_DIST - 1; i++)
 		{
 
 			// Check each block until we find Obsidian or Bedrock
-			if (isMoveable(currentBlock) )
+			if ( isUnpushableBlock(currentBlock) )
 			{
-				// The first block is unbreakable
-				if (nextBlock == null) 
+				// Set bBlock to block before unmovable block
+				currentBlock = previousBlock;
+				
+				// Ensure bBlock is a "breakable_block"
+				if (isBreakableBlock(currentBlock))
 				{
-					//BlockCrusher.logAdd("First Block (" + bBlock.getType().name() + ") is unbreakable.");
-					return null;
+					return currentBlock;
 				}
-				else
-				{
-					// Set bBlock to block before unmovable block
-					currentBlock = nextBlock;
-					
-					// Ensure bBlock is a "breakable_block"
-					if (isBreakableBlock(currentBlock))
-					{
-						return currentBlock;
-					}
-				}
+
 				
 			} else
 			{
-				// Check if an AIR Block exists
+				// Check if an AIR Block exists; exit early
 				if (currentBlock.getType() == Material.AIR)
 				{
-
 					return null;
 				}
 				
-				nextBlock = currentBlock;
+				previousBlock = currentBlock;
 				currentBlock = currentBlock.getRelative(face); 
 			}
 		}
