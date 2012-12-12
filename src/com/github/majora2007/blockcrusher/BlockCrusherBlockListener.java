@@ -134,7 +134,6 @@ public class BlockCrusherBlockListener implements Listener {
 		
 		Block currentBlock = possibleBreakableBlock;
 		Block nextBlock = null;
-		boolean isAir = false;
 
 		
 		
@@ -153,19 +152,12 @@ public class BlockCrusherBlockListener implements Listener {
 				else
 				{
 					// Set bBlock to block before unmovable block
-					//BlockCrusher.logAdd("bBlock -> pBlock: " + bBlock.getType().name() + "->" + pBlock.getType().name());
 					currentBlock = nextBlock;
 					
 					// Ensure bBlock is a "breakable_block"
 					if (isBreakableBlock(currentBlock))
 					{
-						if (isAir)
-						{
-							// Check that there is no air blocks 
-							return null; 
-						}
-						else
-							return currentBlock;
+						return currentBlock;
 					}
 				}
 				
@@ -174,7 +166,8 @@ public class BlockCrusherBlockListener implements Listener {
 				// Check if an AIR Block exists
 				if (currentBlock.getType() == Material.AIR)
 				{
-					isAir = true;
+
+					return null;
 				}
 				
 				nextBlock = currentBlock;
