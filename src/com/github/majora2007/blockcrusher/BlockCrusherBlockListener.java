@@ -24,10 +24,9 @@ public class BlockCrusherBlockListener implements Listener {
 	public static Block process = null;
 	final int MAX_PUSH_DIST = 13; // Pistons push up to 12 blocks
 	List<String> breakBlocks = new ArrayList<String>();
-	boolean isPistonSticky;
-	BlockCrusher plugin;
 	private transient BlockFace[] blockFaces = new BlockFace[] { BlockFace.NORTH, BlockFace.SOUTH, BlockFace.EAST, BlockFace.WEST, BlockFace.UP, BlockFace.DOWN };
-
+	BlockCrusher plugin;
+	
 	public BlockCrusherBlockListener(final BlockCrusher plugin) {
 		this.plugin = plugin;
 	}
@@ -97,6 +96,27 @@ public class BlockCrusherBlockListener implements Listener {
 		return (block.getType() == Material.OBSIDIAN) || (block.getType() == Material.BEDROCK);
 		
 	}
+	
+	private boolean isBreakableBlock(Block block)
+	{
+		//breakBlocks = plugin.getConfig().getStringList("breakable_blocks");
+		
+		for (String str : breakBlocks)
+		{
+			if (block.getTypeId() == Integer.parseInt(str))
+			{	
+				return true;
+				
+//				if (block.getType() == Material.AIR)
+//				{
+//					return false;
+//				} else return true;
+			
+			}
+		}
+		
+		return false;
+	}
 	// FIXME I found an issue. It breaks block if next to Obsidian, but no new block is being pushed into it.
 	/**
 	 * Call checkBreakable here to calculate the new block which will be broken along <code>face</code> up to <code>MAX_PUSH_DIST</code>.
@@ -105,38 +125,27 @@ public class BlockCrusherBlockListener implements Listener {
 	 * @param face
 	 * @return
 	 */
-	private Block checkBreakable(Block possibleBreakableBlock, BlockFace face) {
+	private Block findBreakableBlock(Block possibleBreakableBlock, BlockFace face) {
 		
 		// To check if breakable, need to move from current block along face until MAX_PUSH_DIST 
 		// is met OR an unbreakable (47) block is found (must be bellow MAX_PUSH_DIST).
 		
 		breakBlocks = plugin.getConfig().getStringList("breakable_blocks");
 		
-		Block bBlock = possibleBreakableBlock;
-		Block pBlock = null;
+		Block currentBlock = possibleBreakableBlock;
+		Block nextBlock = null;
 		boolean isAir = false;
-		
-		
-		
-		
-//		if (bBlock.getPistonMoveReaction() == PistonMoveReaction.MOVE)
-//		{
-//			BlockCrusher.logAdd("bBlock can move.");
-//		} else if (bBlock.getPistonMoveReaction() == PistonMoveReaction.BREAK)
-//		{ 
-//			BlockCrusher.logAdd("bBlock can break.");
-//		} else
-//			BlockCrusher.logAdd("bBlock cannot move.");
+
 		
 		
 		for (int i = 0; i < MAX_PUSH_DIST; i++)
 		{
 
 			// Check each block until we find Obsidian or Bedrock
-			if (isMoveable(bBlock) )
+			if (isMoveable(currentBlock) )
 			{
 				// The first block is unbreakable
-				if (pBlock == null) 
+				if (nextBlock == null) 
 				{
 					//BlockCrusher.logAdd("First Block (" + bBlock.getType().name() + ") is unbreakable.");
 					return null;
@@ -145,35 +154,31 @@ public class BlockCrusherBlockListener implements Listener {
 				{
 					// Set bBlock to block before unmovable block
 					//BlockCrusher.logAdd("bBlock -> pBlock: " + bBlock.getType().name() + "->" + pBlock.getType().name());
-					bBlock = pBlock;
+					currentBlock = nextBlock;
 					
 					// Ensure bBlock is a "breakable_block"
-					for (String str : breakBlocks)
+					if (isBreakableBlock(currentBlock))
 					{
-						if (bBlock.getTypeId() == Integer.parseInt(str))
-						{	
-							//BlockCrusher.logAdd("Block " + bBlock.getType().name() + " can be broken.");
-							if (isAir)
-							{
-								// Check that there is no air blocks 
-								return null;
-							}
-							else
-								return bBlock;
+						if (isAir)
+						{
+							// Check that there is no air blocks 
+							return null; 
 						}
+						else
+							return currentBlock;
 					}
-					
 				}
 				
 			} else
 			{
 				// Check if an AIR Block exists
-				if (bBlock.getType() == Material.AIR)
+				if (currentBlock.getType() == Material.AIR)
 				{
 					isAir = true;
 				}
-				pBlock = bBlock;
-				bBlock = bBlock.getRelative(face); 
+				
+				nextBlock = currentBlock;
+				currentBlock = currentBlock.getRelative(face); 
 			}
 		}
 
@@ -188,10 +193,9 @@ public class BlockCrusherBlockListener implements Listener {
 	 * @param event 
 	 * @see BlockPistonEvent
 	 */
-	@EventHandler(priority=EventPriority.HIGHEST)
+	@EventHandler(priority=EventPriority.LOWEST)
 	public void onPistonEvent(BlockPhysicsEvent event)
 	{
-		//TODO QUESTION Should I cancel the event so I handle say?
 		if (event.isCancelled() || event.getBlock().getType() == Material.OBSIDIAN)
 		{
 			return;
@@ -224,13 +228,13 @@ public class BlockCrusherBlockListener implements Listener {
 							
 							if ( isValidBlock(blockToBeMoved) )
 							{
-								blockToBeMoved = checkBreakable(blockToBeMoved, pistonFace);
+								blockToBeMoved = findBreakableBlock(blockToBeMoved, pistonFace);
 							} else {
 								process = null;
 								return;
 							}
 							
-							if ((blockToBeMoved.getType() != Material.AIR)) 
+							if (blockToBeMoved != null && (blockToBeMoved.getType() != Material.AIR)) 
 							{
 								breakBlock(blockToBeMoved);
 							}
