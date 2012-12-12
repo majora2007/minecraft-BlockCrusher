@@ -112,29 +112,23 @@ public class BlockCrusherBlockListener implements Listener {
 	 * @param face
 	 * @return
 	 */
-	private Block findBreakableBlock(Block possibleBreakableBlock, BlockFace face) 
+	private Block findBreakableBlockAlongFace(Block possibleBreakableBlock, BlockFace face) 
 	{
-		
 		// The first block should not be considered, as it will only be pushed, never broken.
 		Block currentBlock = possibleBreakableBlock.getRelative(face);
 		Block previousBlock = possibleBreakableBlock;	
 		
 		for (int i = 0; i < MAX_PUSH_DIST; i++)
 		{
-
-			// Check each block until we find Obsidian or Bedrock
 			if ( isUnpushableBlock(currentBlock) )
 			{
-				// Set bBlock to block before unmovable block
+				// Set bBlock to block before un-pushable block
 				currentBlock = previousBlock;
 				
-				// Ensure bBlock is a "breakable_block"
 				if (isBreakableBlock(currentBlock))
 				{
 					return currentBlock;
 				}
-
-				
 			} else
 			{
 				// Check if an AIR Block exists; exit early
@@ -144,7 +138,7 @@ public class BlockCrusherBlockListener implements Listener {
 				}
 				
 				previousBlock = currentBlock;
-				currentBlock = currentBlock.getRelative(face); 
+				currentBlock = getNextBlockAlongFace(currentBlock, face);
 			}
 		}
 
@@ -152,6 +146,7 @@ public class BlockCrusherBlockListener implements Listener {
 	}
 	
 	
+
 	/***
 	 * Upon a <code>BlockPistonExtendEvent</code>, check to see if the blocks being moved are pushed against 
 	 * Obsidian or Bedrock. If so, break the block. If not, the pistons and blocks behave normally.
@@ -188,7 +183,7 @@ public class BlockCrusherBlockListener implements Listener {
 						
 						if ( isValidBlock(blockToBeMoved) )
 						{
-							blockToBeMoved = findBreakableBlock(blockToBeMoved, pistonFace);
+							blockToBeMoved = findBreakableBlockAlongFace(blockToBeMoved, pistonFace);
 						} else {
 							return;
 						}
@@ -203,11 +198,17 @@ public class BlockCrusherBlockListener implements Listener {
 		}
 	}
 	
-	boolean isValidBlock(Block blockToBeMoved)
+	private Block getNextBlockAlongFace(Block currentBlock, BlockFace face)
+	{
+		return currentBlock.getRelative(face);
+	}
+	
+	private boolean isValidBlock(Block blockToBeMoved)
 	{
 		return (blockToBeMoved.getType() != Material.AIR && blockToBeMoved.getType() != Material.PISTON_EXTENSION && blockToBeMoved.getType() != Material.PISTON_MOVING_PIECE);
 	}
-	void breakBlock(Block blockToBeMoved)
+	
+	private void breakBlock(Block blockToBeMoved)
 	{
 		Collection<ItemStack> bDrops = blockToBeMoved.getDrops();
 		
@@ -222,7 +223,7 @@ public class BlockCrusherBlockListener implements Listener {
 		//}
 	}
 	
-	boolean isPistonBase(Block block)
+	private boolean isPistonBase(Block block)
 	{
 		assert (block != null);
 		
