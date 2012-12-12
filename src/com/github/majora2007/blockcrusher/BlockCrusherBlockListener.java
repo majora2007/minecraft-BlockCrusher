@@ -22,7 +22,7 @@ import org.bukkit.inventory.ItemStack;
  */
 public class BlockCrusherBlockListener implements Listener {
 	public static Block process = null;
-	final int MAX_PUSH_DIST = 13; // Pistons push up to 12 blocks
+	final int MAX_PUSH_DIST = 12; // Pistons push up to 12 blocks
 	List<String> breakBlocks = new ArrayList<String>();
 	private transient BlockFace[] blockFaces = new BlockFace[] { BlockFace.NORTH, BlockFace.SOUTH, BlockFace.EAST, BlockFace.WEST, BlockFace.UP, BlockFace.DOWN };
 	BlockCrusher plugin;
@@ -31,15 +31,12 @@ public class BlockCrusherBlockListener implements Listener {
 		this.plugin = plugin;
 	}
 	
-	private Boolean CheckRealPower(Block pistonBlock, BlockFace pistonFace) {
+	private Boolean isBlockPowered(Block pistonBlock, BlockFace pistonFace) {
 		int power = 0;
-		for (BlockFace face : blockFaces) 
+		
+		if (pistonBlock.isBlockPowered() || pistonBlock.isBlockIndirectlyPowered())
 		{
-			// if the test face is not the face we are facing and the test face is not air, get the blocks power 
-			// and add it to power
-			if (face != pistonFace && pistonBlock.getRelative(face).getType() != Material.AIR) {
-				power += pistonBlock.getRelative(face).getBlockPower();
-			}
+			power = 1;
 		}
 		
 		// if block behind us is powered and the piston is as well, then there is power (NOTE: Does this need to be AND? Can't it be OR?)
@@ -50,9 +47,9 @@ public class BlockCrusherBlockListener implements Listener {
 		}
 	}
 
-	private BlockFace CheckFacing(byte blk) 
+	private BlockFace getBlockFace(byte blockData) 
 	{
-		switch (blk)
+		switch (blockData)
 		{
 			case (0):
 				return BlockFace.DOWN;
@@ -99,25 +96,19 @@ public class BlockCrusherBlockListener implements Listener {
 	
 	private boolean isBreakableBlock(Block block)
 	{
-		//breakBlocks = plugin.getConfig().getStringList("breakable_blocks");
+		breakBlocks = plugin.getConfig().getStringList("breakable_blocks");
 		
 		for (String str : breakBlocks)
 		{
 			if (block.getTypeId() == Integer.parseInt(str))
 			{	
 				return true;
-				
-//				if (block.getType() == Material.AIR)
-//				{
-//					return false;
-//				} else return true;
-			
 			}
 		}
 		
 		return false;
 	}
-	// FIXME I found an issue. It breaks block if next to Obsidian, but no new block is being pushed into it.
+
 	/**
 	 * Call checkBreakable here to calculate the new block which will be broken along <code>face</code> up to <code>MAX_PUSH_DIST</code>.
 	 * 
@@ -125,18 +116,14 @@ public class BlockCrusherBlockListener implements Listener {
 	 * @param face
 	 * @return
 	 */
-	private Block findBreakableBlock(Block possibleBreakableBlock, BlockFace face) {
-		
-		// To check if breakable, need to move from current block along face until MAX_PUSH_DIST 
-		// is met OR an unbreakable (47) block is found (must be bellow MAX_PUSH_DIST).
-		
-		breakBlocks = plugin.getConfig().getStringList("breakable_blocks");
+	private Block findBreakableBlock(Block possibleBreakableBlock, BlockFace face) 
+	{
 		
 		// The first block should not be considered, as it will only be pushed, never broken.
 		Block currentBlock = possibleBreakableBlock.getRelative(face);
 		Block previousBlock = possibleBreakableBlock;	
 		
-		for (int i = 0; i < MAX_PUSH_DIST - 1; i++)
+		for (int i = 0; i < MAX_PUSH_DIST; i++)
 		{
 
 			// Check each block until we find Obsidian or Bedrock
@@ -186,46 +173,37 @@ public class BlockCrusherBlockListener implements Listener {
 		
 		boolean breakBlocks = plugin.getConfig().getBoolean("settings.break_blocks", false);
 		
-		
 		if ( breakBlocks )
 		{
 			Block pistonBlock = event.getBlock();
+			Block blockToBeMoved = null;
 			
 			
-			if (pistonBlock != process) // QUESTION Can this cause a problem?
+			if ( isPistonBase(pistonBlock) ) 
 			{
-				process = pistonBlock; // process is the piston base
-				Block blockToBeMoved = null;
+				BlockFace pistonFace = getBlockFace(pistonBlock.getData());
 				
-				
-				if ( isPistonBase(pistonBlock) ) 
+				if (pistonFace != null) 
 				{
-					BlockFace pistonFace = CheckFacing(pistonBlock.getData());
-					
-					if (pistonFace != null) 
-					{
-						// Checks if the piston is powered.
-						if (CheckRealPower(pistonBlock, pistonFace)) {
-							
-							blockToBeMoved = pistonBlock.getRelative(pistonFace, 1);
-							
-							if ( isValidBlock(blockToBeMoved) )
-							{
-								blockToBeMoved = findBreakableBlock(blockToBeMoved, pistonFace);
-							} else {
-								process = null;
-								return;
-							}
-							
-							if (blockToBeMoved != null && (blockToBeMoved.getType() != Material.AIR)) 
-							{
-								breakBlock(blockToBeMoved);
-							}
+					// Checks if the piston is powered.
+					if (isBlockPowered(pistonBlock, pistonFace)) {
+						
+						blockToBeMoved = pistonBlock.getRelative(pistonFace, 1);
+						
+						if ( isValidBlock(blockToBeMoved) )
+						{
+							blockToBeMoved = findBreakableBlock(blockToBeMoved, pistonFace);
+						} else {
+							return;
+						}
+						
+						if (blockToBeMoved != null && (blockToBeMoved.getType() != Material.AIR)) 
+						{
+							breakBlock(blockToBeMoved);
 						}
 					}
-				} 
-				process = null;
-			}
+				}
+			} 
 		}
 	}
 	
