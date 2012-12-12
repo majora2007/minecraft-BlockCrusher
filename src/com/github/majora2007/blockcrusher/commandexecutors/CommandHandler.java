@@ -14,7 +14,7 @@ import com.github.majora2007.blockcrusher.CommandResponse;
 /**
  * Handles execution of the "blockcrusher" command.
  * 
- * @author jvmilazz
+ * @author Majora2007
  *
  */
 public class CommandHandler implements CommandExecutor

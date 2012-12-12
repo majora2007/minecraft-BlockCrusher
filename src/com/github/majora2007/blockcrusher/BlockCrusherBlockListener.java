@@ -7,7 +7,6 @@ import java.util.List;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
-import org.bukkit.block.PistonMoveReaction;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -16,15 +15,12 @@ import org.bukkit.event.block.BlockPistonEvent;
 import org.bukkit.inventory.ItemStack;
 
 /**
- * TODO: Fix Redstone Teleporters blocking this listener
- * 
  * @author Majora2007
  */
 public class BlockCrusherBlockListener implements Listener {
 	public static Block process = null;
 	final int MAX_PUSH_DIST = 12; // Pistons push up to 12 blocks
 	List<String> breakBlocks = new ArrayList<String>();
-	private transient BlockFace[] blockFaces = new BlockFace[] { BlockFace.NORTH, BlockFace.SOUTH, BlockFace.EAST, BlockFace.WEST, BlockFace.UP, BlockFace.DOWN };
 	BlockCrusher plugin;
 	
 	public BlockCrusherBlockListener(final BlockCrusher plugin) {
