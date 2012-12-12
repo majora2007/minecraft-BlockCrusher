@@ -26,7 +26,7 @@ public class BlockCrusherBlockListener implements Listener {
 		this.plugin = plugin;
 	}
 	
-	private Boolean isBlockPowered(Block pistonBlock, BlockFace pistonFace) {
+	private Boolean isBlockPowered(Block pistonBlock) {
 		int powerBlockRecieves = 0;
 		
 		if (pistonBlock.isBlockPowered() || pistonBlock.isBlockIndirectlyPowered())
@@ -42,8 +42,10 @@ public class BlockCrusherBlockListener implements Listener {
 		}
 	}
 
-	private BlockFace getBlockFace(byte blockData) 
+	private BlockFace getBlockFace(Block block) 
 	{
+		byte blockData = block.getData();
+		
 		switch (blockData)
 		{
 			case (0):
@@ -116,8 +118,11 @@ public class BlockCrusherBlockListener implements Listener {
 	 */
 	private Block findBreakableBlockAlongFace(Block startingBlock, BlockFace face) 
 	{
+		 if ( !isValidBlock(startingBlock) )
+			 return null;
+		 
 		// The first block should not be considered, as it will only be pushed, never broken.
-		Block currentBlock = startingBlock.getRelative(face);
+		Block currentBlock = getNextBlockAlongFace( startingBlock, face );
 		Block previousBlock = startingBlock;	
 		
 		for (int i = 0; i < MAX_PUSH_DIST; i++)
@@ -164,39 +169,50 @@ public class BlockCrusherBlockListener implements Listener {
 			return;
 		}
 		
-		boolean breakBlocks = plugin.getConfig().getBoolean("settings.break_blocks", false);
+		if ( !canBreakBlocks() ) return;
+
+		Block pistonBlock = event.getBlock();
+		BlockFace pistonFace = getBlockFace(pistonBlock);
+		Block blockToBeMoved = null;
+		Block blockBeingBroken = null;
 		
-		if ( breakBlocks )
+		if ( isBlockPistonBase(pistonBlock) ) 
 		{
-			Block pistonBlock = event.getBlock();
-			Block blockToBeMoved = null;
-			
-			
-			if ( isBlockPistonBase(pistonBlock) ) 
-			{
-				BlockFace pistonFace = getBlockFace(pistonBlock.getData());
-				
-				if (pistonFace != null) 
-				{
-					if (isBlockPowered(pistonBlock, pistonFace)) 
-					{
-						blockToBeMoved = pistonBlock.getRelative(pistonFace, 1);
-						
-						if ( isValidBlock(blockToBeMoved) )
-						{
-							blockToBeMoved = findBreakableBlockAlongFace(blockToBeMoved, pistonFace);
-						} else {
-							return;
-						}
-						
-						if (blockToBeMoved != null && (blockToBeMoved.getType() != Material.AIR)) 
-						{
-							breakBlock(blockToBeMoved);
-						}
-					}
-				}
-			} 
+			blockToBeMoved = getBlockToBePushed( pistonBlock, pistonFace );
+					
+			blockBeingBroken = findBreakableBlockAlongFace(blockToBeMoved, pistonFace);
+			breakBlock( blockBeingBroken );
+		} 
+	}
+
+
+	private void breakBlock( Block blockBeingBroken )
+	{
+		if ( isValidBlock(blockBeingBroken) ) 
+		{
+			breakBlockAndDropItems(blockBeingBroken);
 		}
+	}
+
+	private Block getBlockToBePushed(Block pistonBase, BlockFace pistonFace)
+	{
+		Block blockToBeMoved = null;
+	
+		if (pistonFace != null) 
+		{
+			if (isBlockPowered(pistonBase)) 
+			{
+				blockToBeMoved = pistonBase.getRelative(pistonFace, 1);
+			}
+		}
+		
+		return blockToBeMoved;
+	}
+	
+	private boolean canBreakBlocks()
+	{
+		boolean breakBlocks = plugin.getConfig().getBoolean("settings.break_blocks", false);
+		return breakBlocks;
 	}
 	
 	private Block getNextBlockAlongFace(Block currentBlock, BlockFace face)
@@ -206,10 +222,10 @@ public class BlockCrusherBlockListener implements Listener {
 	
 	private boolean isValidBlock(Block blockToBeMoved)
 	{
-		return (blockToBeMoved.getType() != Material.AIR && blockToBeMoved.getType() != Material.PISTON_EXTENSION && blockToBeMoved.getType() != Material.PISTON_MOVING_PIECE);
+		return (blockToBeMoved != null && blockToBeMoved.getType() != Material.AIR && blockToBeMoved.getType() != Material.PISTON_EXTENSION && blockToBeMoved.getType() != Material.PISTON_MOVING_PIECE);
 	}
 	
-	private void breakBlock(Block blockToBeMoved)
+	private void breakBlockAndDropItems(Block blockToBeMoved)
 	{
 		Collection<ItemStack> bDrops = blockToBeMoved.getDrops();
 		
