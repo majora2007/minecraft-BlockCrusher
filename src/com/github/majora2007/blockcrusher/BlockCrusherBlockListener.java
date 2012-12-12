@@ -234,10 +234,9 @@ public class BlockCrusherBlockListener implements Listener {
 			blockToBeMoved.getWorld().dropItemNaturally(blockToBeMoved.getLocation(), is);
 		}
 		
-		//if (!pis.getType().equals(Material.PISTON_STICKY_BASE))
-		//{
-			blockToBeMoved.setType(Material.AIR); // DEBUG
-		//}
+
+		blockToBeMoved.setType(Material.AIR); // This sets the broken block to AIR as dropItemNaturally doesn't do this for us
+
 	}
 	
 	private boolean isBlockPistonBase(Block block)
