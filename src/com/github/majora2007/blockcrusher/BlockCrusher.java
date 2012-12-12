@@ -35,8 +35,7 @@ public class BlockCrusher extends JavaPlugin
         this.saveDefaultConfig();
         
         
-		PluginDescriptionFile pluginDescriptionFile = getDescription();
-		pluginLogPrefix = "[" +  pluginDescriptionFile.getName() + " version: " + pluginDescriptionFile.getVersion() + "] - ";
+		declareLoggerPrefix();
 		
 		commandHandler = new CommandHandler(this);
 		getServer().getPluginManager().registerEvents(this.blockListener, this);
@@ -53,6 +52,13 @@ public class BlockCrusher extends JavaPlugin
 		
 		
 		logAdd("BlockCrusher has been enabled.");
+	}
+
+	
+	private void declareLoggerPrefix()
+	{
+		PluginDescriptionFile pluginDescriptionFile = getDescription();
+		pluginLogPrefix = "[" +  pluginDescriptionFile.getName() + " version: " + pluginDescriptionFile.getVersion() + "] - ";
 	}
 
 	@Override

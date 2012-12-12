@@ -34,22 +34,15 @@ public class CommandHandler implements CommandExecutor
 	 * @see org.bukkit.command.CommandExecutor#onCommand(org.bukkit.command.CommandSender, org.bukkit.command.Command, java.lang.String, java.lang.String[])
 	 */
 	@Override
-	public boolean onCommand( CommandSender sender, Command cmd, String cmdAlias,
-			String[] arguments )
+	public boolean onCommand( CommandSender sender, Command cmd, String cmdAlias, String[] arguments )
 	{
-		
-		//plugin.getLogger().info( "onCommand was called with command and  alias: " + cmd.getName() +", " + cmdAlias );
-		BlockCrusher.logAdd("BlockCrusher received a command.");
-		
 		if (isCommandFromPlayer(sender)) 
 		{
-			BlockCrusher.logAdd("Command is from Player.");
 			String command = cmd.getName().toLowerCase();
 			Player player = (Player) sender;
 			
 			if ( isBlockCrusherCommand(command) ) 
 			{
-				BlockCrusher.logAdd("Command is for BlockCrusher.");
 				CommandResponse response;
 				
 				if ( checkUsage(arguments) )
@@ -58,10 +51,7 @@ public class CommandHandler implements CommandExecutor
 					player.sendMessage( response.getResponseMessage() );
 					
 					return true;
-				} else {
-					BlockCrusher.logAdd("Command is not proper form.");
 				}
-				
 			}
 		}
 		

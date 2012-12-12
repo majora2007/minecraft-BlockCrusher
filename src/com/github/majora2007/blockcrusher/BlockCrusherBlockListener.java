@@ -178,9 +178,8 @@ public class BlockCrusherBlockListener implements Listener {
 				
 				if (pistonFace != null) 
 				{
-					// Checks if the piston is powered.
-					if (isBlockPowered(pistonBlock, pistonFace)) {
-						
+					if (isBlockPowered(pistonBlock, pistonFace)) 
+					{
 						blockToBeMoved = pistonBlock.getRelative(pistonFace, 1);
 						
 						if ( isValidBlock(blockToBeMoved) )
