@@ -12,7 +12,7 @@ import com.github.majora2007.blockcrusher.BlockCrusher;
 import com.github.majora2007.blockcrusher.CommandResponse;
 
 /**
- * Handles execution of the "blockcrusher" command.
+ * Handles execution of the "blockcrusher"/"bc" command.
  * 
  * @author Majora2007
  *
@@ -20,6 +20,8 @@ import com.github.majora2007.blockcrusher.CommandResponse;
 public class CommandHandler implements CommandExecutor
 {
 	private BlockCrusher plugin;
+	
+	
 	/**
 	 * @param plugin Owning plugin
 	 * 
@@ -36,7 +38,7 @@ public class CommandHandler implements CommandExecutor
 			String[] arguments )
 	{
 		
-		plugin.getLogger().info( "onCommand was called with command and  alias: " + cmd.getName() +", " + cmdAlias );
+		//plugin.getLogger().info( "onCommand was called with command and  alias: " + cmd.getName() +", " + cmdAlias );
 		BlockCrusher.logAdd("BlockCrusher received a command.");
 		
 		if (isCommandFromPlayer(sender)) 
@@ -65,6 +67,8 @@ public class CommandHandler implements CommandExecutor
 		
 		return false;
 	}
+	
+	
 	
 	CommandResponse parseCommand(String[] commandArguments)
 	{

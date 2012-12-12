@@ -28,15 +28,15 @@ public class BlockCrusherBlockListener implements Listener {
 	}
 	
 	private Boolean isBlockPowered(Block pistonBlock, BlockFace pistonFace) {
-		int power = 0;
+		int powerBlockRecieves = 0;
 		
 		if (pistonBlock.isBlockPowered() || pistonBlock.isBlockIndirectlyPowered())
 		{
-			power = 1;
+			powerBlockRecieves = 1;
 		}
 		
 		// if block behind us is powered and the piston is as well, then there is power (NOTE: Does this need to be AND? Can't it be OR?)
-		if (power > 0 && pistonBlock.getBlockPower() > 0) {
+		if (powerBlockRecieves > 0 && pistonBlock.getBlockPower() > 0) {
 			return true;
 		} else {
 			return false;
