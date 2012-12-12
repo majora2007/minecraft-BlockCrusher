@@ -1,6 +1,5 @@
 package com.github.majora2007.blockcrusher;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -20,7 +19,7 @@ import org.bukkit.inventory.ItemStack;
 public class BlockCrusherBlockListener implements Listener {
 	public static Block process = null;
 	final int MAX_PUSH_DIST = 12; // Pistons push up to 12 blocks
-	List<String> breakBlocks = new ArrayList<String>();
+	//List<String> breakBlocks = new ArrayList<String>();
 	BlockCrusher plugin;
 	
 	public BlockCrusherBlockListener(final BlockCrusher plugin) {
@@ -92,9 +91,9 @@ public class BlockCrusherBlockListener implements Listener {
 	
 	private boolean isBreakableBlock(Block block)
 	{
-		breakBlocks = plugin.getConfig().getStringList("breakable_blocks");
+		List<String> breakableBlocks = plugin.getConfig().getStringList("breakable_blocks");
 		
-		for (String str : breakBlocks)
+		for (String str : breakableBlocks)
 		{
 			if (block.getTypeId() == Integer.parseInt(str))
 			{	
