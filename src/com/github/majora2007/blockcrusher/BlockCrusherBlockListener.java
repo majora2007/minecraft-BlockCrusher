@@ -79,14 +79,14 @@ public class BlockCrusherBlockListener implements Listener {
 
 	
 	// FIXME I found an issue. It breaks block if next to Obsidian, but no new block is being pushed into it.
-	private Block checkBreakable(Block blk, BlockFace face) {
+	private Block checkBreakable(Block possibleBreakableBlock, BlockFace face) {
 		
 		// To check if breakable, need to move from current block along face until MAX_PUSH_DIST 
 		// is met OR an unbreakable (47) block is found (must be bellow MAX_PUSH_DIST).
 		
 		breakBlocks = plugin.getConfig().getStringList("breakable_blocks");
 		
-		Block bBlock = blk;
+		Block bBlock = possibleBreakableBlock;
 		Block pBlock = null;
 		boolean isAir = false;
 		
@@ -95,7 +95,6 @@ public class BlockCrusherBlockListener implements Listener {
 			BlockCrusher.logAdd("bBlock can move.");
 		} else
 			BlockCrusher.logAdd("bBlock cannot move.");*/
-		
 		
 		
 		for (int i = 0; i < MAX_PUSH_DIST; i++)
@@ -168,56 +167,67 @@ public class BlockCrusherBlockListener implements Listener {
 			return;
 		}
 		
+		boolean breakBlocks = plugin.getConfig().getBoolean("settings.break_blocks", false);
 		
 		
-		if ( plugin.getConfig().getBoolean("settings.break_blocks", false) )
+		if ( breakBlocks )
 		{
-			Block pis = event.getBlock();
-			if (pis != process) // QUESTION Can this cause a problem?
+			Block pistonBlock = event.getBlock();
+			
+			if (pistonBlock != process) // QUESTION Can this cause a problem?
 			{
-				process = pis; // process is the block being pushed (JVM: It's actually PISTON_BASE)
-				Block bBlock = null;
+				process = pistonBlock; // process is the piston base
+				Block blockToBeMoved = null;
 				
 				
-				if ((pis.getType() == Material.PISTON_BASE) || (pis.getType() == Material.PISTON_STICKY_BASE)) 
+				if ( isPistonBase(pistonBlock) ) 
 				{
-					BlockFace face = CheckFacing(pis.getData());
+					BlockFace face = CheckFacing(pistonBlock.getData());
 					
 					if (face != null) 
 					{
-						if (CheckRealPower(pis, face)) {
-							bBlock = pis.getRelative(face, 1);
+						if (CheckRealPower(pistonBlock, face)) {
+							blockToBeMoved = pistonBlock.getRelative(face, 1);
 							//BlockCrusher.logAdd("[-]bBlock = " + bBlock.getType().name());
 							
 							// Call checkBreakable here to calc an ItemStack along <code>face</code> 
 							// up to <code>MAX_PUSH_DIST</code>.
-							if (bBlock.getType() != Material.AIR
-									&& bBlock.getType() != Material.PISTON_EXTENSION
-									&& bBlock.getType() != Material.PISTON_MOVING_PIECE)
+							if (blockToBeMoved.getType() != Material.AIR
+									&& blockToBeMoved.getType() != Material.PISTON_EXTENSION
+									&& blockToBeMoved.getType() != Material.PISTON_MOVING_PIECE)
 							{
-								bBlock = checkBreakable(bBlock, face);
+								blockToBeMoved = checkBreakable(blockToBeMoved, face);
 							} else
-								bBlock = null;
+								blockToBeMoved = null;
 					
-							if ((bBlock != null) && (bBlock.getType() != Material.AIR)) 
+							if ((blockToBeMoved != null) && (blockToBeMoved.getType() != Material.AIR)) 
 							{
-									Collection<ItemStack> bDrops = bBlock.getDrops();
+									Collection<ItemStack> bDrops = blockToBeMoved.getDrops();
 									
 									for (ItemStack is : bDrops)
 									{
-										bBlock.getWorld().dropItemNaturally(bBlock.getLocation(), is);
+										blockToBeMoved.getWorld().dropItemNaturally(blockToBeMoved.getLocation(), is);
 									}
 									
 									//if (!pis.getType().equals(Material.PISTON_STICKY_BASE))
 									//{
-										bBlock.setType(Material.AIR); // DEBUG
+										blockToBeMoved.setType(Material.AIR); // DEBUG
 									//}
 							}
 						}
 					}
-				}
+				} 
 				process = null;
 			}
 		}
+	}
+	
+	
+	
+	boolean isPistonBase(Block block)
+	{
+		assert (block != null);
+		
+		return ((block.getType() == Material.PISTON_BASE) || (block.getType() == Material.PISTON_STICKY_BASE));
 	}
 }
