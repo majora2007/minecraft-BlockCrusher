@@ -24,8 +24,10 @@ public class BlockCrusherBlockListener implements Listener {
 	final int MAX_PUSH_DIST = 13; // Pistons push up to 12 blocks
 	List<String> breakBlocks = new ArrayList<String>();
 	boolean isPistonSticky;
+	BlockCrusher plugin;
 
 	public BlockCrusherBlockListener(final BlockCrusher plugin) {
+		this.plugin = plugin;
 	}
 	
 	private Boolean CheckRealPower(Block blk, BlockFace pis) {
@@ -82,7 +84,7 @@ public class BlockCrusherBlockListener implements Listener {
 		// To check if breakable, need to move from current block along face until MAX_PUSH_DIST 
 		// is met OR an unbreakable (47) block is found (must be bellow MAX_PUSH_DIST).
 		
-		breakBlocks = BlockCrusher.pluginConfig.getStringList("breakable_blocks");
+		breakBlocks = plugin.getConfig().getStringList("breakable_blocks");
 		
 		Block bBlock = blk;
 		Block pBlock = null;
@@ -168,7 +170,7 @@ public class BlockCrusherBlockListener implements Listener {
 		
 		
 		
-		if ( BlockCrusher.pluginConfig.getBoolean("settings.break_blocks", false) )
+		if ( plugin.getConfig().getBoolean("settings.break_blocks", false) )
 		{
 			Block pis = event.getBlock();
 			if (pis != process) // QUESTION Can this cause a problem?

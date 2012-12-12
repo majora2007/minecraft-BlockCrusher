@@ -9,7 +9,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import com.github.majora2007.blockcrusher.BlockCrusher;
-import com.github.majora2007.blockcrusher.BlockCrusherConfig;
 import com.github.majora2007.blockcrusher.CommandResponse;
 
 /**
@@ -75,7 +74,7 @@ public class CommandHandler implements CommandExecutor
 		
 		if (isReloadCommand(command))
 		{
-			//BlockCrusherConfig.load(); // This does not work, throws NPE
+			plugin.reloadConfig();
 			response.setResponseMessage( BlockCrusher.pluginLogPrefix + " Configuration Reloaded." );
 		} else if (command.startsWith("help") || command.equals("h")) {
 			response.setResponseMessage("Help: /blockcrusher reload"); // This should display all help options

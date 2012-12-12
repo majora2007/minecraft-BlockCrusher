@@ -22,9 +22,7 @@ import com.github.majora2007.blockcrusher.commandexecutors.CommandHandler;
 public class BlockCrusher extends JavaPlugin
 {
 	public static Logger consoleLogger = Logger.getLogger("Minecraft");
-	
 	public static String pluginLogPrefix;
-	public static FileConfiguration pluginConfig; //TODO Replace this immediately! Very bad!
 	
 
 	private final BlockCrusherBlockListener blockListener = new BlockCrusherBlockListener(this);
@@ -33,6 +31,10 @@ public class BlockCrusher extends JavaPlugin
 	@Override
 	public void onEnable()
 	{
+		// Save a copy of the default config.yml if one is not there
+        this.saveDefaultConfig();
+        
+        
 		PluginDescriptionFile pluginDescriptionFile = getDescription();
 		pluginLogPrefix = "[" +  pluginDescriptionFile.getName() + " version: " + pluginDescriptionFile.getVersion() + "] - ";
 		
@@ -43,11 +45,10 @@ public class BlockCrusher extends JavaPlugin
 		getCommand("bc").setExecutor( commandHandler );
 		
 		
-		pluginConfig = this.getConfig();
 		
-		if (pluginConfig == null)
+		if (getConfig() == null)
 		{
-			logAdd("pluginConfig.yml failed to load.");
+			logAdd("config.yml failed to load.");
 		}
 		
 		
@@ -57,6 +58,7 @@ public class BlockCrusher extends JavaPlugin
 	@Override
 	public void onDisable()
 	{
+		saveDefaultConfig();
 		logAdd("BlockCrusher has been disabled.");
 	}
 
