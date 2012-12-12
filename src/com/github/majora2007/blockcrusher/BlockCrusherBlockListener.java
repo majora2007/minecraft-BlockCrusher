@@ -105,17 +105,20 @@ public class BlockCrusherBlockListener implements Listener {
 	}
 
 	/**
-	 * Call checkBreakable here to calculate the new block which will be broken along <code>face</code> up to <code>MAX_PUSH_DIST</code>.
+	 * From a block, check {@literal BlockCrusherBlockListener#MAX_PUSH_DIST} blocks along a face until 
+	 * an unpushable block is found. Return the block before the unpushable block or null if a block is 
+	 * <code>Material.AIR</code> or no unpushable block is found.
 	 * 
-	 * @param possibleBreakableBlock
-	 * @param face
-	 * @return
+	 * @param startingBlock The block that will be moved by the piston
+	 * @param face The direction in which blocks should be checked.
+	 * 
+	 * @return The {@link Block} which will be broken. <code>null</code>  
 	 */
-	private Block findBreakableBlockAlongFace(Block possibleBreakableBlock, BlockFace face) 
+	private Block findBreakableBlockAlongFace(Block startingBlock, BlockFace face) 
 	{
 		// The first block should not be considered, as it will only be pushed, never broken.
-		Block currentBlock = possibleBreakableBlock.getRelative(face);
-		Block previousBlock = possibleBreakableBlock;	
+		Block currentBlock = startingBlock.getRelative(face);
+		Block previousBlock = startingBlock;	
 		
 		for (int i = 0; i < MAX_PUSH_DIST; i++)
 		{
@@ -169,7 +172,7 @@ public class BlockCrusherBlockListener implements Listener {
 			Block blockToBeMoved = null;
 			
 			
-			if ( isPistonBase(pistonBlock) ) 
+			if ( isBlockPistonBase(pistonBlock) ) 
 			{
 				BlockFace pistonFace = getBlockFace(pistonBlock.getData());
 				
@@ -222,7 +225,7 @@ public class BlockCrusherBlockListener implements Listener {
 		//}
 	}
 	
-	private boolean isPistonBase(Block block)
+	private boolean isBlockPistonBase(Block block)
 	{
 		assert (block != null);
 		
