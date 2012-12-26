@@ -73,7 +73,7 @@ public class BlockCrusherBlockListener implements Listener {
 			case (13):
 				return BlockFace.EAST;
 			default:
-				return null; //return BlockFace.SELF;
+				return BlockFace.SELF;
 		}
 	}
 
@@ -170,7 +170,7 @@ public class BlockCrusherBlockListener implements Listener {
 			pistonFace = getBlockFace(pistonBlock);
 			blockToBeMoved = getBlockToBePushed( pistonBlock, pistonFace );
 
-			if (!isValidBlock(blockToBeMoved) || !pistonCanMoveBlock( blockToBeMoved )) return;
+			if (!pistonCanMoveBlock( blockToBeMoved )) return;
 			
 			blockBeingBroken = findBreakableBlockAlongFace(blockToBeMoved, pistonFace);
 			breakBlock( blockBeingBroken );
@@ -180,9 +180,10 @@ public class BlockCrusherBlockListener implements Listener {
 
 	private boolean pistonCanMoveBlock( Block blockToBeMoved )
 	{
-		if (blockToBeMoved == null) return false;
+		if (!isValidBlock(blockToBeMoved)) return false;
 		
-		if ((blockToBeMoved.getPistonMoveReaction() == PistonMoveReaction.BLOCK) || (blockToBeMoved.getPistonMoveReaction() == PistonMoveReaction.BREAK))
+		final PistonMoveReaction pistonMoveReaction = blockToBeMoved.getPistonMoveReaction();
+		if ( (pistonMoveReaction == PistonMoveReaction.BLOCK) || (pistonMoveReaction == PistonMoveReaction.BREAK) || isUnpushableBlock( blockToBeMoved ) )
 		{
 			return false;
 		}
