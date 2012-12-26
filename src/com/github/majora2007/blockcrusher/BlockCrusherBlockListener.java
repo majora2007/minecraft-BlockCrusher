@@ -6,6 +6,7 @@ import java.util.List;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.block.PistonMoveReaction;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -168,9 +169,25 @@ public class BlockCrusherBlockListener implements Listener {
 		{
 			pistonFace = getBlockFace(pistonBlock);
 			blockToBeMoved = getBlockToBePushed( pistonBlock, pistonFace );
+
+			if (!isValidBlock(blockToBeMoved) || !pistonCanMoveBlock( blockToBeMoved )) return;
+			
 			blockBeingBroken = findBreakableBlockAlongFace(blockToBeMoved, pistonFace);
 			breakBlock( blockBeingBroken );
+
 		} 
+	}
+
+	private boolean pistonCanMoveBlock( Block blockToBeMoved )
+	{
+		if (blockToBeMoved == null) return false;
+		
+		if ((blockToBeMoved.getPistonMoveReaction() == PistonMoveReaction.BLOCK) || (blockToBeMoved.getPistonMoveReaction() == PistonMoveReaction.BREAK))
+		{
+			return false;
+		}
+		
+		return true;
 	}
 
 
