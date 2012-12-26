@@ -19,7 +19,6 @@ import org.bukkit.inventory.ItemStack;
 public class BlockCrusherBlockListener implements Listener {
 	public static Block process = null;
 	final int MAX_PUSH_DIST = 12; // Pistons push up to 12 blocks
-	//List<String> breakBlocks = new ArrayList<String>();
 	BlockCrusher plugin;
 	
 	public BlockCrusherBlockListener(final BlockCrusher plugin) {
@@ -73,7 +72,7 @@ public class BlockCrusherBlockListener implements Listener {
 			case (13):
 				return BlockFace.SOUTH;
 			default:
-				return null;
+				return BlockFace.SELF;
 		}
 	}
 
@@ -129,7 +128,6 @@ public class BlockCrusherBlockListener implements Listener {
 		{
 			if ( isUnpushableBlock(currentBlock) )
 			{
-				// Set bBlock to block before un-pushable block
 				currentBlock = previousBlock;
 				
 				if (isBreakableBlock(currentBlock))
@@ -151,7 +149,6 @@ public class BlockCrusherBlockListener implements Listener {
 
 		return null;
 	}
-	
 	
 
 	/***
@@ -179,7 +176,9 @@ public class BlockCrusherBlockListener implements Listener {
 		if ( isBlockPistonBase(pistonBlock) ) 
 		{
 			blockToBeMoved = getBlockToBePushed( pistonBlock, pistonFace );
-					
+			BlockCrusher.logToConsole( "Block " + blockToBeMoved.getType().toString() + " is block to be moved." );
+			blockToBeMoved.setType( Material.DIAMOND_BLOCK );
+			
 			blockBeingBroken = findBreakableBlockAlongFace(blockToBeMoved, pistonFace);
 			breakBlock( blockBeingBroken );
 		} 
@@ -211,7 +210,7 @@ public class BlockCrusherBlockListener implements Listener {
 	
 	private boolean canBreakBlocks()
 	{
-		boolean breakBlocks = plugin.getConfig().getBoolean("settings.break_blocks", false);
+		final boolean breakBlocks = plugin.getConfig().getBoolean("settings.break_blocks", false);
 		return breakBlocks;
 	}
 	
