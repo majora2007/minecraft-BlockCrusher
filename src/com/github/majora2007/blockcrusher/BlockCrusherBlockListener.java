@@ -226,22 +226,22 @@ public class BlockCrusherBlockListener implements Listener {
 		return currentBlock.getRelative(face);
 	}
 	
-	private boolean isValidBlock(Block blockToBeMoved)
+	private boolean isValidBlock(Block block)
 	{
-		return (blockToBeMoved != null && blockToBeMoved.getType() != Material.AIR && blockToBeMoved.getType() != Material.PISTON_EXTENSION && blockToBeMoved.getType() != Material.PISTON_MOVING_PIECE);
+		return (block != null && block.getType() != Material.AIR && block.getType() != Material.PISTON_EXTENSION && block.getType() != Material.PISTON_MOVING_PIECE);
 	}
 	
-	private void breakBlockAndDropItems(Block blockToBeMoved)
+	private void breakBlockAndDropItems(Block blockToBeBroken)
 	{
-		Collection<ItemStack> bDrops = blockToBeMoved.getDrops();
+		Collection<ItemStack> bDrops = blockToBeBroken.getDrops();
 		
 		for (ItemStack is : bDrops)
 		{
-			blockToBeMoved.getWorld().dropItemNaturally(blockToBeMoved.getLocation(), is);
+			blockToBeBroken.getWorld().dropItemNaturally(blockToBeBroken.getLocation(), is);
 		}
 		
 
-		blockToBeMoved.setType(Material.AIR); // This sets the broken block to AIR as dropItemNaturally doesn't do this for us
+		blockToBeBroken.setType(Material.AIR); // This sets the broken block to AIR as dropItemNaturally doesn't do this for us
 
 	}
 	
