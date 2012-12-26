@@ -77,17 +77,8 @@ public class BlockCrusherBlockListener implements Listener {
 	}
 
 	private boolean isUnpushableBlock(Block block)
-	{
-		// PistonMoveReaction does not work, it will cause exceptions to be thrown.
-//		PistonMoveReaction pistonMoveReaction = block.getPistonMoveReaction();
-//		if (pistonMoveReaction == PistonMoveReaction.BREAK || pistonMoveReaction == PistonMoveReaction.BLOCK)
-//		{ 
-//			return false;
-//		}
-//		return true;
-		
-		return (block.getType() == Material.OBSIDIAN) || (block.getType() == Material.BEDROCK);
-		
+	{	
+		return (block.getType() == Material.OBSIDIAN) || (block.getType() == Material.BEDROCK);	
 	}
 	
 	private boolean isBreakableBlock(Block block)
