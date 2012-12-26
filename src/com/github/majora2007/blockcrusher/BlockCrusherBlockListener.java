@@ -33,7 +33,7 @@ public class BlockCrusherBlockListener implements Listener {
 			powerBlockRecieves = 1;
 		}
 		
-		// if block behind us is powered and the piston is as well, then there is power (NOTE: Does this need to be AND? Can't it be OR?)
+		// if block behind us is powered and the piston is as well, then there is power
 		if (powerBlockRecieves > 0 && pistonBlock.getBlockPower() > 0) {
 			return true;
 		} else {
@@ -45,8 +45,6 @@ public class BlockCrusherBlockListener implements Listener {
 	{
 		byte blockData = block.getData();
 		
-		BlockCrusher.logToConsole( "Block data: " + blockData );
-		
 		switch (blockData)
 		{
 			case (0):
@@ -54,25 +52,25 @@ public class BlockCrusherBlockListener implements Listener {
 			case (1):
 				return BlockFace.UP;
 			case (2):
-				return BlockFace.EAST;
-			case (3):
-				return BlockFace.WEST;
-			case (4):
 				return BlockFace.NORTH;
-			case (5):
+			case (3):
 				return BlockFace.SOUTH;
+			case (4):
+				return BlockFace.WEST;
+			case (5):
+				return BlockFace.EAST;
 			case (8):
 				return BlockFace.DOWN;
 			case (9):
 				return BlockFace.UP;
 			case (10):
-				return BlockFace.EAST;
-			case (11):
-				return BlockFace.WEST;
-			case (12):
 				return BlockFace.NORTH;
-			case (13):
+			case (11):
 				return BlockFace.SOUTH;
+			case (12):
+				return BlockFace.WEST;
+			case (13):
+				return BlockFace.EAST;
 			default:
 				return null; //return BlockFace.SELF;
 		}
@@ -170,10 +168,6 @@ public class BlockCrusherBlockListener implements Listener {
 		{
 			pistonFace = getBlockFace(pistonBlock);
 			blockToBeMoved = getBlockToBePushed( pistonBlock, pistonFace );
-			if (blockToBeMoved == null) return;
-			BlockCrusher.logToConsole( "Block " + blockToBeMoved.getType().toString() + " is block to be moved." );
-			blockToBeMoved.setType( Material.DIAMOND_BLOCK );
-			
 			blockBeingBroken = findBreakableBlockAlongFace(blockToBeMoved, pistonFace);
 			breakBlock( blockBeingBroken );
 		} 
