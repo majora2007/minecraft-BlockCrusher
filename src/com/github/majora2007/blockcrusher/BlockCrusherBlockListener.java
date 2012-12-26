@@ -45,6 +45,8 @@ public class BlockCrusherBlockListener implements Listener {
 	{
 		byte blockData = block.getData();
 		
+		BlockCrusher.logToConsole( "Block data: " + blockData );
+		
 		switch (blockData)
 		{
 			case (0):
@@ -72,7 +74,7 @@ public class BlockCrusherBlockListener implements Listener {
 			case (13):
 				return BlockFace.SOUTH;
 			default:
-				return BlockFace.SELF;
+				return null; //return BlockFace.SELF;
 		}
 	}
 
@@ -152,7 +154,7 @@ public class BlockCrusherBlockListener implements Listener {
 	@EventHandler(priority=EventPriority.LOWEST)
 	public void onPistonEvent(BlockPhysicsEvent event)
 	{
-		if (event.isCancelled() || event.getBlock().getType() == Material.OBSIDIAN)
+		if (event.isCancelled())
 		{
 			return;
 		}
@@ -160,13 +162,15 @@ public class BlockCrusherBlockListener implements Listener {
 		if ( !canBreakBlocks() ) return;
 
 		Block pistonBlock = event.getBlock();
-		BlockFace pistonFace = getBlockFace(pistonBlock);
+		BlockFace pistonFace = null;
 		Block blockToBeMoved = null;
 		Block blockBeingBroken = null;
 		
 		if ( isBlockPistonBase(pistonBlock) ) 
 		{
+			pistonFace = getBlockFace(pistonBlock);
 			blockToBeMoved = getBlockToBePushed( pistonBlock, pistonFace );
+			if (blockToBeMoved == null) return;
 			BlockCrusher.logToConsole( "Block " + blockToBeMoved.getType().toString() + " is block to be moved." );
 			blockToBeMoved.setType( Material.DIAMOND_BLOCK );
 			
