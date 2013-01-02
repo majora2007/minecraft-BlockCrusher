@@ -4,9 +4,16 @@ main: com.github.majora2007.blockcrusher.BlockCrusher
 version: 1.0
 commands:
     blockcrusher:
-        description: Reloads the config
-        usage: /blockcrusher help
-        alias: bc
-    bc:
-        description: Reloads the config
-        usage: /bc help
+        aliases: [bc]
+        usage: |
+            /<command> reload
+            /<command> help
+    
+    reload:
+        description: Reloads the configuration.
+        permission: blockcrusher.reload
+        usage: /<command> reload
+    help:
+        description: Displays help.
+        permission: blockcrusher.help
+        usage: /<command> help

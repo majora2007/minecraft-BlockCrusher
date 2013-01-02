@@ -2,6 +2,9 @@ package com.github.majora2007.blockcrusher;
 
 import java.util.logging.Logger;
 
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -57,6 +60,7 @@ public class BlockCrusher extends JavaPlugin
 	private void registerListeners()
 	{
 		registerBlockListener();
+		this.getServer().getPluginManager().registerEvents( this.commandHandler, this );
 	}
 
 
@@ -69,6 +73,14 @@ public class BlockCrusher extends JavaPlugin
 	private void createCommandHandler()
 	{
 		commandHandler = new CommandHandler(this);
+	}
+	
+	public boolean onCommand(CommandSender sender, Command cmd, String commandLabel, String[] args)
+	{
+		if (!cmd.getName().equalsIgnoreCase( "blockcrusher" ) || !cmd.getName().equalsIgnoreCase( "bc" )) return false;
+		if (sender instanceof Player) return true;
+		
+		return true;
 	}
 
 	

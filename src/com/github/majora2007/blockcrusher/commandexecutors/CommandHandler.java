@@ -3,10 +3,10 @@
  */
 package com.github.majora2007.blockcrusher.commandexecutors;
 
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
-import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 
 import com.github.majora2007.blockcrusher.BlockCrusher;
 import com.github.majora2007.blockcrusher.CommandResponse;
@@ -17,79 +17,65 @@ import com.github.majora2007.blockcrusher.CommandResponse;
  * @author Majora2007
  *
  */
-public class CommandHandler implements CommandExecutor
+public class CommandHandler implements Listener
 {
-	private BlockCrusher plugin;
+	private BlockCrusher parentPlugin;
 	
 	
 	/**
-	 * @param plugin Owning plugin
+	 * @param parentPlugin Owning parentPlugin
 	 * 
 	 */
 	public CommandHandler(final BlockCrusher plugin) {
-		this.plugin = plugin;
-		
-		this.plugin.getCommand("blockcrusher").setExecutor( this );
-		this.plugin.getCommand("bc").setExecutor( this );
+		this.parentPlugin = plugin;
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.bukkit.command.CommandExecutor#onCommand(org.bukkit.command.CommandSender, org.bukkit.command.Command, java.lang.String, java.lang.String[])
-	 */
-	@Override
-	public boolean onCommand( CommandSender sender, Command cmd, String cmdAlias, String[] arguments )
+	@EventHandler
+	public void onPlayerCommandPreprocess(PlayerCommandPreprocessEvent event)
 	{
-		if (isCommandFromPlayer(sender)) 
-		{
-			String command = cmd.getName().toLowerCase();
-			Player player = (Player) sender;
-			
-			if ( isBlockCrusherCommand(command) ) 
-			{
-				CommandResponse response;
-				
-				if ( checkUsage(arguments) )
-				{
-					response = parseCommand(arguments);
-					player.sendMessage( response.getResponseMessage() );
-					
-					return true;
-				}
-			}
-		}
+		String[] commandArguments = event.getMessage().split( " " );
+
+		if(!checkUsage(commandArguments)) return;
 		
-		return false;
+		if (!isBlockCrusherCommand(  commandArguments[0] )) return;
+		event.setCancelled(true);
+
+		Player player = event.getPlayer();
+		
+		CommandResponse response;
+		response = parseCommandAndCreateResponse(commandArguments);
+		player.sendMessage( response.getResponseMessage() );
+
 	}
 	
 	
 	
-	CommandResponse parseCommand(String[] commandArguments)
+	CommandResponse parseCommandAndCreateResponse(String[] commandArguments)
 	{
 		CommandResponse response = new CommandResponse();
 		
-		String command = extractSubCommand( commandArguments );
 		
-		if (isReloadCommand(command))
+		if (isReloadCommand( commandArguments[1] ))
 		{
-			plugin.reloadConfig();
-			response.setResponseMessage( BlockCrusher.pluginLogPrefix + " Configuration Reloaded." );
-		} else if (command.startsWith("help") || command.equals("h")) {
-			response.setResponseMessage("Help: /blockcrusher reload"); // This should display all help options
+			parentPlugin.reloadConfig();
+			response.setResponseMessage( BlockCrusher.pluginLogPrefix + "Configuration has been reloaded." );
+		} else if (isHelpCommand( commandArguments[1] )) {
+			response.setResponseMessage( this.parentPlugin.getCommand( "blockcrusher" ).getUsage() );
 		} else {
-			response.setResponseMessage( "Usage: /blockcrusher help" );
+			response.setResponseMessage( this.parentPlugin.getCommand( "blockcrusher" ).getUsage() );
 		}
 		
 		return response;
 	}
-	
-	boolean isCommandFromPlayer(CommandSender cmdSender)
+
+	private boolean isHelpCommand( String subCommand )
 	{
-		return cmdSender instanceof Player;
+		return (subCommand.equalsIgnoreCase( "help" ));
 	}
 	
 	boolean isBlockCrusherCommand(String command)
 	{
-		return (command.startsWith( "blockcrusher" ) || command.equals( "bc" ));
+		return (!(command.equalsIgnoreCase("/blockcrusher") || command.equalsIgnoreCase("/bc")));
 	}
 	
 	boolean checkUsage(String[] args)
@@ -97,16 +83,9 @@ public class CommandHandler implements CommandExecutor
 		return (args != null && args.length > 0);
 	}
 	
-	String extractSubCommand(String[] args)
-	{
-		assert(args.length > 0);
-		
-		return args[0];
-	}
-	
 	boolean isReloadCommand(String subCommand) 
 	{
-		return (subCommand.equals("reload") || subCommand.equals("r")); 
+		return (subCommand.equalsIgnoreCase("reload") || subCommand.equalsIgnoreCase("r")); 
 	}
 	
 }
