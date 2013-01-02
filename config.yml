@@ -1,6 +1,9 @@
 settings:
-  break_blocks: 
-    true
+# Break block mode: none, first, last, all
+# None - Disables plugin, first - breaks the block the piston moves, last - breaks the block being 
+# pushed into an un-pushable block, all - breaks the entire stack of blocks between first and last.
+  break_block_mode: 
+    last
 
 breakable_blocks:
   - 1             # Stone

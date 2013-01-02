@@ -22,10 +22,6 @@ public class CommandHandler implements Listener
 	private BlockCrusher parentPlugin;
 	
 	
-	/**
-	 * @param parentPlugin Owning parentPlugin
-	 * 
-	 */
 	public CommandHandler(final BlockCrusher plugin) {
 		this.parentPlugin = plugin;
 	}
@@ -43,8 +39,16 @@ public class CommandHandler implements Listener
 		Player player = event.getPlayer();
 		
 		CommandResponse response;
-		response = parseCommandAndCreateResponse(commandArguments);
-		player.sendMessage( response.getResponseMessage() );
+//		response = parseCommandAndCreateResponse(commandArguments);
+//		player.sendMessage( response.getResponseMessage() );
+		
+		if (isReloadCommand( commandArguments[1] ))
+		{
+			parentPlugin.reloadConfig();
+			player.sendMessage( BlockCrusher.pluginLogPrefix + "Configuration has been reloaded." );
+		} else if (isHelpCommand( commandArguments[1] )) {
+			player.sendMessage( this.parentPlugin.getCommand( "blockcrusher" ).getUsage() );
+		}
 
 	}
 	
@@ -61,8 +65,6 @@ public class CommandHandler implements Listener
 			response.setResponseMessage( BlockCrusher.pluginLogPrefix + "Configuration has been reloaded." );
 		} else if (isHelpCommand( commandArguments[1] )) {
 			response.setResponseMessage( this.parentPlugin.getCommand( "blockcrusher" ).getUsage() );
-		} else {
-			response.setResponseMessage( this.parentPlugin.getCommand( "blockcrusher" ).getUsage() );
 		}
 		
 		return response;
@@ -75,17 +77,17 @@ public class CommandHandler implements Listener
 	
 	boolean isBlockCrusherCommand(String command)
 	{
-		return (!(command.equalsIgnoreCase("/blockcrusher") || command.equalsIgnoreCase("/bc")));
+		return ((command.equalsIgnoreCase("/blockcrusher") || command.equalsIgnoreCase("/bc")));
 	}
 	
 	boolean checkUsage(String[] args)
 	{
-		return (args != null && args.length > 0);
+		return (args != null && args.length >= 1);
 	}
 	
 	boolean isReloadCommand(String subCommand) 
 	{
-		return (subCommand.equalsIgnoreCase("reload") || subCommand.equalsIgnoreCase("r")); 
+		return (subCommand.equalsIgnoreCase("reload")); 
 	}
 	
 }

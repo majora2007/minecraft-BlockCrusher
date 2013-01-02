@@ -1,5 +1,6 @@
 package com.github.majora2007.blockcrusher;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -17,12 +18,12 @@ import org.bukkit.inventory.ItemStack;
 /**
  * @author Majora2007
  */
-public class BlockCrusherBlockListener implements Listener {
+public class BlockListener implements Listener {
 	public static Block process = null;
 	final int MAX_PUSH_DIST = 12; // Pistons push up to 12 blocks
 	BlockCrusher plugin;
 	
-	public BlockCrusherBlockListener(final BlockCrusher plugin) {
+	public BlockListener(final BlockCrusher plugin) {
 		this.plugin = plugin;
 	}
 	
@@ -98,7 +99,7 @@ public class BlockCrusherBlockListener implements Listener {
 	}
 
 	/**
-	 * From a block, check {@literal BlockCrusherBlockListener#MAX_PUSH_DIST} blocks along a face until 
+	 * From a block, check {@literal BlockListener#MAX_PUSH_DIST} blocks along a face until 
 	 * an unpushable block is found. Return the block before the unpushable block or null if a block is 
 	 * <code>Material.AIR</code> or no unpushable block is found.
 	 * 
@@ -122,9 +123,17 @@ public class BlockCrusherBlockListener implements Listener {
 			{
 				currentBlock = previousBlock;
 				
-				if (isBreakableBlock(currentBlock))
+				if (getBreakBlockMode() == Mode.Last)
 				{
-					return currentBlock;
+					if (isBreakableBlock(currentBlock))
+					{
+						return currentBlock;
+					}
+				} else if (getBreakBlockMode() == Mode.First) {
+					if (isBreakableBlock(startingBlock))
+					{
+						return startingBlock;
+					}
 				}
 			} else
 			{
@@ -172,10 +181,55 @@ public class BlockCrusherBlockListener implements Listener {
 
 			if (!pistonCanMoveBlock( blockToBeMoved )) return;
 			
-			blockBeingBroken = findBreakableBlockAlongFace(blockToBeMoved, pistonFace);
-			breakBlock( blockBeingBroken );
+			if (getBreakBlockMode() == Mode.All)
+			{
+				List<Block> blocksBeingBroken = findAllBreakableBlocksAlongFace(blockToBeMoved, pistonFace);
+				if (blocksBeingBroken == null || blocksBeingBroken.isEmpty()) return;
+				
+				for (Block block : blocksBeingBroken)
+				{
+					breakBlock( block );
+				}
+				
+			} else {
+				blockBeingBroken = findBreakableBlockAlongFace(blockToBeMoved, pistonFace);
+				breakBlock( blockBeingBroken );
+			}
+			
+			
 
 		} 
+	}
+
+	private List<Block> findAllBreakableBlocksAlongFace( Block startingBlock, BlockFace face )
+	{
+		if ( !isValidBlock(startingBlock) )
+			 return null;
+		
+		ArrayList<Block> breakableBlocks = new ArrayList<Block>();
+		
+		Block currentBlock = startingBlock;
+		
+		for (int i = 0; i < MAX_PUSH_DIST; i++)
+		{
+			if ( isUnpushableBlock(currentBlock) )
+			{
+				break;
+			} else
+			{
+				if (isBreakableBlock( currentBlock ))
+				{
+					breakableBlocks.add( currentBlock );
+					currentBlock = getNextBlockAlongFace(currentBlock, face);
+				} else if ( currentBlock.getType() == Material.AIR) {
+					// else if we are air block, return null so that we push normally.
+					return null;
+				}
+			}
+		}
+		
+		
+		return breakableBlocks;
 	}
 
 	private boolean pistonCanMoveBlock( Block blockToBeMoved )
@@ -217,8 +271,19 @@ public class BlockCrusherBlockListener implements Listener {
 	
 	private boolean canBreakBlocks()
 	{
-		final boolean breakBlocks = plugin.getConfig().getBoolean("settings.break_blocks", false);
-		return breakBlocks;
+		String breakBlockMode = plugin.getConfig().getString( "settings.break_block_mode" );
+		if (breakBlockMode.equalsIgnoreCase( "NONE" )) return false;
+		else return true;
+	}
+	
+	private Mode getBreakBlockMode() {
+		String breakBlockMode = plugin.getConfig().getString( "settings.break_block_mode" );
+		if (breakBlockMode.equalsIgnoreCase( "NONE" )) return Mode.None;
+		else if (breakBlockMode.equalsIgnoreCase( "First" )) return Mode.First;
+		else if (breakBlockMode.equalsIgnoreCase( "Last" )) return Mode.Last;
+		else if (breakBlockMode.equalsIgnoreCase( "ALL" )) return Mode.All;
+		
+		return Mode.None; // default value is None
 	}
 	
 	private Block getNextBlockAlongFace(Block currentBlock, BlockFace face)

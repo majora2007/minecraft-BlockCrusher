@@ -26,7 +26,7 @@ public class BlockCrusher extends JavaPlugin
 	public static String pluginLogPrefix;
 	
 
-	private final BlockCrusherBlockListener blockListener = new BlockCrusherBlockListener(this);
+	private final BlockListener blockListener = new BlockListener(this);
 	private CommandHandler commandHandler;
 
 	@Override
@@ -60,7 +60,7 @@ public class BlockCrusher extends JavaPlugin
 	private void registerListeners()
 	{
 		registerBlockListener();
-		this.getServer().getPluginManager().registerEvents( this.commandHandler, this );
+		getServer().getPluginManager().registerEvents( this.commandHandler, this );
 	}
 
 
