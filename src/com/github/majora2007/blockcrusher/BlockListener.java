@@ -87,10 +87,12 @@ public class BlockListener implements Listener {
 		return (block.getType() == Material.OBSIDIAN) || (block.getType() == Material.BEDROCK);	
 	}
 	
-	private boolean isBreakableBlock(Block block)
+	private boolean isBreakableBlock(final Block block)
 	{
 		List<String> breakableBlocks = plugin.getConfig().getStringList("breakable_blocks");
 		
+		// NOTE: We can make this much quicker to search through by sorting the breakable blocks array after the first 
+		// time it is loaded in (which should be onEnable()/onReload()).
 		for (String str : breakableBlocks)
 		{
 			if (block.getTypeId() == Integer.parseInt(str))

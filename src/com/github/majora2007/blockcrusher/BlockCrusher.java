@@ -6,6 +6,7 @@ package com.github.majora2007.blockcrusher;
 
 import java.util.logging.Logger;
 
+import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -24,7 +25,7 @@ import com.github.majora2007.blockcrusher.commandexecutors.CommandHandler;
  *
  * @author Majora2007
  */
-public class BlockCrusher extends JavaPlugin
+public final class BlockCrusher extends JavaPlugin
 {
 	public static Logger consoleLogger = Logger.getLogger("Minecraft");
 	public static String pluginLogPrefix;
@@ -45,7 +46,7 @@ public class BlockCrusher extends JavaPlugin
 		registerListeners();
 
 		
-		logToConsole("BlockCrusher has been enabled.");
+		BlockCrusher.logToConsole("BlockCrusher has been enabled.");
 	}
 
 
@@ -53,7 +54,7 @@ public class BlockCrusher extends JavaPlugin
 	public void onDisable()
 	{
 		saveDefaultConfig();
-		logToConsole("BlockCrusher has been disabled.");
+		BlockCrusher.logToConsole("BlockCrusher has been disabled.");
 	}
 
 	public static void logToConsole(String logMessage) 
