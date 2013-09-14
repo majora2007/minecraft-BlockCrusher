@@ -39,7 +39,8 @@ public class CommandHandler implements Listener
 
 		Player player = event.getPlayer();
 		
-		CommandResponse response;
+		
+		//CommandResponse response;
 //		response = parseCommandAndCreateResponse(commandArguments);
 //		player.sendMessage( response.getResponseMessage() );
 		

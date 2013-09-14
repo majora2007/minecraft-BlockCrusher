@@ -6,7 +6,6 @@ package com.github.majora2007.blockcrusher;
 
 import java.util.logging.Logger;
 
-import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
