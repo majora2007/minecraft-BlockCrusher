@@ -6,13 +6,8 @@ package com.github.majora2007.blockcrusher;
 
 import java.util.logging.Logger;
 
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPlugin;
-
-import com.github.majora2007.blockcrusher.commandexecutors.CommandHandler;
 
 
 /**
@@ -31,7 +26,6 @@ public final class BlockCrusher extends JavaPlugin
 	
 
 	private final BlockListener blockListener = new BlockListener(this);
-	private CommandHandler commandHandler;
 
 	@Override
 	public void onEnable()
@@ -40,12 +34,7 @@ public final class BlockCrusher extends JavaPlugin
         this.saveDefaultConfig();
         
 		declareLoggerPrefix();
-		
-		createCommandHandler();
 		registerListeners();
-
-		
-		BlockCrusher.logToConsole("BlockCrusher has been enabled.");
 	}
 
 
@@ -53,10 +42,9 @@ public final class BlockCrusher extends JavaPlugin
 	public void onDisable()
 	{
 		saveDefaultConfig();
-		BlockCrusher.logToConsole("BlockCrusher has been disabled.");
 	}
 
-	public static void logToConsole(String logMessage) 
+	public static void log(final String logMessage) 
 	{
 		consoleLogger.info(pluginLogPrefix + logMessage);
 	}
@@ -64,7 +52,6 @@ public final class BlockCrusher extends JavaPlugin
 	private void registerListeners()
 	{
 		registerBlockListener();
-		getServer().getPluginManager().registerEvents( this.commandHandler, this );
 	}
 
 
@@ -72,25 +59,10 @@ public final class BlockCrusher extends JavaPlugin
 	{
 		getServer().getPluginManager().registerEvents(this.blockListener, this);
 	}
-
-
-	private void createCommandHandler()
-	{
-		commandHandler = new CommandHandler(this);
-	}
-	
-	public boolean onCommand(CommandSender sender, Command cmd, String commandLabel, String[] args)
-	{
-		if (!cmd.getName().equalsIgnoreCase( "blockcrusher" ) || !cmd.getName().equalsIgnoreCase( "bc" )) return false;
-		if (sender instanceof Player) return true;
-		
-		return true;
-	}
-
 	
 	private void declareLoggerPrefix()
 	{
-		PluginDescriptionFile pluginDescriptionFile = getDescription();
-		pluginLogPrefix = "[" +  pluginDescriptionFile.getName() + " version: " + pluginDescriptionFile.getVersion() + "] - ";
+		final PluginDescriptionFile pluginDescriptionFile = getDescription();
+		pluginLogPrefix = "[" +  pluginDescriptionFile.getName() + "]: ";
 	}
 }
