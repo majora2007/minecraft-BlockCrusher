@@ -2,7 +2,7 @@
  * Distributed under The MIT License
  * http://www.opensource.org/licenses/MIT
  */
-package com.github.majora2007.blockcrusher;
+package com.majora2007.minecraft.blockcrusher;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -257,7 +257,6 @@ public class BlockListener implements Listener {
 		
 		return true;
 	}
-
 
 	private void breakBlock( Block blockBeingBroken )
 	{
