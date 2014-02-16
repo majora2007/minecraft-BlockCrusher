@@ -1,1 +1,3 @@
-View http://majora2007.github.com/BlockCrusher/ for description.
+BlockCrusher is a plugin which comes from my want to create an automated tree farm. I needed a way to break the wood blocks and this plugin is the realization of it. What BlockCrusher does is change the way pistons work. Normally when a piston pushes against an unmovable block, the piston does not extend. However, I have made it so the block(s) in between the piston and the unmovable block will break naturally as if you had mined it yourself.
+
+The plugin is very simplistic as it should be. There are no commands, there are no permissions. There are two configuration options which are detailed below.

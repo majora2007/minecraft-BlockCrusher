@@ -1,3 +1,7 @@
+/**
+ * Distributed under The MIT License
+ * http://www.opensource.org/licenses/MIT
+ */
 package com.github.majora2007.blockcrusher;
 
 import java.util.ArrayList;
@@ -43,6 +47,13 @@ public class BlockListener implements Listener {
 		}
 	}
 
+	/**
+	 * Get the director the block is facing.
+	 * 
+	 * NOTE: This code may break between API updates.
+	 * @param block
+	 * @return
+	 */
 	private BlockFace getBlockFace(Block block) 
 	{
 		byte blockData = block.getData();
@@ -158,7 +169,7 @@ public class BlockListener implements Listener {
 	 * Upon a <code>BlockPistonExtendEvent</code>, check to see if the blocks being moved are pushed against 
 	 * Obsidian or Bedrock. If so, break the block. If not, the pistons and blocks behave normally.
 	 * 
-	 * @param event 
+	 * @param event PistonEvent
 	 * @see BlockPistonEvent
 	 */
 	@EventHandler(priority=EventPriority.LOWEST)

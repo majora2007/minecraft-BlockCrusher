@@ -2,9 +2,9 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>BlockCrusher</groupId>
   <artifactId>BlockCrusher</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
+  <version>1.0.2</version>
   <name>BlockCrusher</name>
-  <description>TODO: Fill in.</description>
+  <description>Modifies pistons to allow them to break a configurable list of blocks against unbreakable blocks.</description>
   <repositories>
 		<!-- Bukkit can be found at the following repository -->
 		<repository>
@@ -25,7 +25,7 @@
 			<groupId>org.bukkit</groupId>
 			<artifactId>bukkit</artifactId>
 			<!-- Bukkit API Version, change if necessary -->
-			<version>1.6.2-R0.1</version>
+			<version>1.7.2-R0.3</version>
 		</dependency>
 	</dependencies>
   <build>
